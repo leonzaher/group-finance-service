@@ -32,7 +32,7 @@ public class GroupController {
         return groupRepository.save(group);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Group> getAllGroups() {
         return groupRepository.findAll();
     }

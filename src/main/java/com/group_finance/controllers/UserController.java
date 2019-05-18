@@ -53,13 +53,28 @@ public class UserController {
 
         checkGroupContainsUser(group, username);
 
-        group.getGroupMembers().get(username).setUsername(user.getUsername());
-        group.getGroupMembers().get(username).setBalance(user.getBalance());
+        User existingUser = group.getGroupMembers().get(username);
+        if (user.getBalance() != null)
+            existingUser.setBalance(user.getBalance());
+        if (user.getUsername() != null)
+            existingUser.setUsername(user.getUsername());
+
+        // If we're changing the username, we need to delete and add the new user, since username is also key in database
+        if (user.getUsername() != null) {
+            existingUser.setUsername(user.getUsername());
+
+            Map<String, User> groupMembers = new HashMap<>(group.getGroupMembers());
+            groupMembers.remove(username);
+            groupMembers.put(existingUser.getUsername(), existingUser);
+            group.setGroupMembers(groupMembers);
+        } else {
+            group.getGroupMembers().replace(existingUser.getUsername(), existingUser);
+        }
 
         groupRepository.save(group);
 
         LOGGER.debug("Updated user: '{}' in group: '{}' to '{}'", username, groupName, user);
-        return group.getGroupMembers().get(username);
+        return existingUser;
     }
 
     @DeleteMapping
