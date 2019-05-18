@@ -15,7 +15,7 @@
 
 `group update --name=example --updated_name=updated`
 
-`group delete --name=example`
+`group delete --name=updated`
 
 ---
 `user create --group=example --username=user1`
@@ -24,7 +24,11 @@
 
 `user update --group=example --username=user1 --updated_username=new_user`
 
-`user delete --group=example --username=user1`
+`user update --group=example --username=user1 --balance=5.5`
+
+`user update --group=example --username=user1 --updated_username=new_user --balance=5.5`
+
+`user delete --group=example --username=new_user`
 
 ---
 `balance increase --group=example --username=user1 --amount=5`
@@ -36,5 +40,3 @@
 `balance group_payment --group=example --payer=user1 --amount=5`
 
 `balance detailed_payment --group=example --payer=user1 --payment_details=[{username: user2, amount: 5}, ...]`
-
-NOTE: all arguments are required in each command

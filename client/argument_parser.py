@@ -56,7 +56,8 @@ def parse_args(args):
     update_up.set_defaults(func=req.user_update)
     update_up.add_argument('--group', dest='group', type=str, required=True)
     update_up.add_argument('--username', dest='username', type=str, required=True)
-    update_up.add_argument('--updated_username', dest='updated_username', type=str, required=True)
+    update_up.add_argument('--updated_username', dest='updated_username')
+    update_up.add_argument('--balance', dest='balance')
 
     delete_up = user_subp.add_parser('delete')
     delete_up.set_defaults(func=req.user_delete)
