@@ -24,7 +24,12 @@ public class UserController {
     @Autowired
     private GroupController groupController;
 
-
+    /**
+     * POST request handler that creates a new User with given parameters
+     * @param groupName group to create the user in
+     * @param user data which will be used for creating the user
+     * @return User object with all the data
+     */
     @PostMapping
     public User createUser(@RequestParam("group") String groupName, @RequestBody User user) {
         Group group = groupController.getByNameWithCheck(groupName);
@@ -42,11 +47,23 @@ public class UserController {
         return user;
     }
 
+    /**
+     * GET request handler that returns all users in a group
+     * @param groupName group to fetch users from
+     * @return List of User objects
+     */
     @GetMapping
     public List<User> getAllUsers(@RequestParam("group") String groupName) {
         return new ArrayList<>(groupController.getByNameWithCheck(groupName).getGroupMembers().values());
     }
 
+    /**
+     * PUT request handler that updates a certain user with given data
+     * @param groupName group name that the user is in
+     * @param username username of the user to be updated
+     * @param user data to be updated
+     * @return updated User object
+     */
     @PutMapping
     public User updateUser(@RequestParam("group") String groupName, @RequestParam String username, @RequestBody User user) {
         Group group = groupController.getByNameWithCheck(groupName);
@@ -59,7 +76,7 @@ public class UserController {
         if (user.getUsername() != null)
             existingUser.setUsername(user.getUsername());
 
-        // If we're changing the username, we need to delete and add the new user, since username is also key in database
+        // If we're changing the username, we need to delete and add the new user, since username is also the key in database
         if (user.getUsername() != null) {
             existingUser.setUsername(user.getUsername());
 
@@ -77,6 +94,12 @@ public class UserController {
         return existingUser;
     }
 
+    /**
+     * DELETE request handler that deletes an user
+     * @param groupName group to delete the user from
+     * @param username user to delete
+     * @return group that the user was deleted in
+     */
     @DeleteMapping
     public Group deleteUser(@RequestParam("group") String groupName, @RequestParam String username) {
         Group group = groupController.getByNameWithCheck(groupName);

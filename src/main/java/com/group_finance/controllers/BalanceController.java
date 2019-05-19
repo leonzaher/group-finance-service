@@ -24,6 +24,13 @@ public class BalanceController {
     @Autowired
     private GroupController groupController;
 
+    /**
+     * Increases balance for a certain user
+     * @param groupName group that the user is in
+     * @param username username of the user
+     * @param amount amount to increase the balance by
+     * @return updated User object
+     */
     @PutMapping("/increase")
     public User increaseBalance(@RequestParam("group") String groupName, @RequestParam String username,
                                  @RequestParam double amount) {
@@ -39,12 +46,28 @@ public class BalanceController {
         return group.getGroupMembers().get(username);
     }
 
+    /**
+     * Decreases balance for a certain user
+     * This is just for ease of use, it uses increaseBalance
+     * @param groupName group that the user is in
+     * @param username username of the user
+     * @param amount amount to increase the balance by
+     * @return updated User object
+     */
     @PutMapping("/decrease")
     public User decreaseBalance(@RequestParam("group") String groupName, @RequestParam String username,
                                  @RequestParam double amount) {
         return increaseBalance(groupName, username, -amount);
     }
 
+    /**
+     * Makes a payment from one user to another
+     * @param groupName group that the user is in
+     * @param payerUsername username of the payer
+     * @param payeeUsername username of the payee
+     * @param amount payment amount
+     * @return HTTP status OK if successful
+     */
     @PutMapping("/payment")
     public ResponseEntity executePayment(@RequestParam("group") String groupName, @RequestParam("payer") String payerUsername,
                                     @RequestParam("payee") String payeeUsername, @RequestParam double amount) {
@@ -61,6 +84,13 @@ public class BalanceController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Makes a payment from one user to the whole group
+     * @param groupName group that the user is in
+     * @param payerUsername username of the payer
+     * @param amount total payment amount
+     * @return HTTP status OK if successful
+     */
     @PutMapping("/payment/group")
     public ResponseEntity executeGroupPayment(@RequestParam("group") String groupName,
                                          @RequestParam("payer") String payerUsername,
@@ -84,6 +114,13 @@ public class BalanceController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Makes a payment where amount for each payee can be different
+     * @param groupName group that the user is in
+     * @param payerUsername username of the payer
+     * @param paymentDetails list of {username, amount} pairs
+     * @return HTTP status OK if successful
+     */
     @PutMapping("/payment/detailed")
     public ResponseEntity executeDetailedPayment(@RequestParam("group") String groupName,
                                                  @RequestParam("payer") String payerUsername,
