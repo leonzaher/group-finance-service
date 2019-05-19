@@ -39,4 +39,4 @@
 
 `balance group_payment --group=example --payer=user1 --amount=5`
 
-`balance detailed_payment --group=example --payer=user1 --payment_details=[{username: user2, amount: 5}, ...]`
+`balance detailed_payment --group=example --payer=user1 --payment_details user2 5.5 --payment_details user3 7.6`

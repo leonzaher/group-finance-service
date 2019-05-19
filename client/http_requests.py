@@ -1,4 +1,5 @@
 import requests
+import json
 
 ### CHANGE THIS AS NEEDED
 SERVER_URL = "http://localhost:8080"
@@ -78,11 +79,16 @@ def balance_payment(args):
     print(r.text)
 
 def balance_group_payment(args):
-    r = requests.put(SERVER_URL + balance_endpoint + group_payment_endpoint, params={'group': args.group, 'payer': args.payer, 'amount': args.amount})
+    r = requests.put(SERVER_URL + balance_endpoint + payment_endpoint + group_payment_endpoint, params={'group': args.group, 'payer': args.payer, 'amount': args.amount})
     print(r.status_code, r.reason)
     print(r.text)
 
 def balance_detailed_payment(args):
-    r = requests.put(SERVER_URL + balance_endpoint + detailed_payment_endpoint, params={'group': args.group, 'payer': args.payer}, json={'paymentDetails': args.payment_details})
+    body_str = "["
+    for payment in args.payment_details:
+        body_str += json.dumps(payment.__dict__) + ","
+    body_str = body_str[:-1] + "]"
+
+    r = requests.put(SERVER_URL + balance_endpoint + payment_endpoint + detailed_payment_endpoint, params={'group': args.group, 'payer': args.payer}, json=json.loads(body_str))
     print(r.status_code, r.reason)
     print(r.text)

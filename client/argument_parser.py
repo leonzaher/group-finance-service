@@ -2,7 +2,29 @@ import argparse
 import http_requests as req
 
 
-class ArgumentParserError(Exception): pass
+class PaymentDetails():
+    def __init__(self, username, amount):
+        self.username = username
+        self.amount = amount
+
+    def __repr__(self):
+        return 'PaymentDetails(%r, %r)' % (self.username, self.amount)
+
+
+class PaymentDetailsAction(argparse.Action):
+    def __init__(self, *args, **kwargs):
+        super(PaymentDetailsAction, self).__init__(*args, **kwargs)
+        self.nargs = 2
+
+    def __call__(self, parser, namespace, values, option_string):
+        lst = getattr(namespace, self.dest, []) or []
+        a, b = values
+        lst.append(PaymentDetails(str(a), float(b)))
+        setattr(namespace, self.dest, lst)
+
+
+class ArgumentParserError(Exception):
+    pass
 
 
 class ThrowingArgumentParser(argparse.ArgumentParser):
@@ -85,7 +107,7 @@ def parse_args(args):
     payment_p.set_defaults(func=req.balance_payment)
     payment_p.add_argument('--group', dest='group', type=str, required=True)
     payment_p.add_argument('--payer', dest='payer', type=str, required=True)
-    payment_p.add_argument('--payee', dest='payer', type=str, required=True)
+    payment_p.add_argument('--payee', dest='payee', type=str, required=True)
     payment_p.add_argument('--amount', dest='amount', type=float, required=True)
 
     group_payment_p = balance_subp.add_parser('group_payment')
@@ -98,7 +120,7 @@ def parse_args(args):
     detailed_payment_p.set_defaults(func=req.balance_detailed_payment)
     detailed_payment_p.add_argument('--group', dest='group', type=str, required=True)
     detailed_payment_p.add_argument('--payer', dest='payer', type=str, required=True)
-    detailed_payment_p.add_argument('--payment_details', dest='payment_details', type=str, required=True)
+    detailed_payment_p.add_argument('--payment_details', action=PaymentDetailsAction)
 
 
     parsed_args = parser.parse_args(args)
