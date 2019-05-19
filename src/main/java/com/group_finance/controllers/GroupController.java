@@ -21,11 +21,7 @@ public class GroupController {
 
     @PostMapping
     public Group createGroup(@RequestBody Group group) {
-        if (groupRepository.findByName(group.getName()) != null) {
-            String errorMessage = String.format("Group with name '%s' already exists", group.getName());
-            LOGGER.error(errorMessage);
-            throw new InvalidInputException(errorMessage);
-        }
+        checkGroupAlreadyExists(group.getName());
 
         LOGGER.debug("Created group: '{}'", group);
 
@@ -52,6 +48,8 @@ public class GroupController {
 
     @PutMapping
     public Group updateGroup(@RequestParam("name") String groupName, @RequestBody Group group) {
+        checkGroupAlreadyExists(group.getName());
+
         Group groupEntity = getByNameWithCheck(groupName);
         groupEntity.setName(group.getName());
 
@@ -65,5 +63,13 @@ public class GroupController {
         groupRepository.delete(getByNameWithCheck(groupName));
         LOGGER.debug("Deleted group '{}'", groupName);
         return ResponseEntity.ok().build();
+    }
+
+    private void checkGroupAlreadyExists(String name) {
+        if (groupRepository.findByName(name) != null) {
+            String errorMessage = String.format("Group with name '%s' already exists", name);
+            LOGGER.error(errorMessage);
+            throw new InvalidInputException(errorMessage);
+        }
     }
 }
