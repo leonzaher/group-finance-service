@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -90,13 +91,13 @@ public class GroupControllerTest {
     @Test
     public void updateGroupTest() {
         // When
-        when(groupRepository.findByName(anyString())).thenReturn(testData.DEFAULT_GROUP);
+        when(groupRepository.findByName(anyString())).thenReturn(null, testData.DEFAULT_GROUP);
         when(groupRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
         // Then
         Group returnedValue = groupController.updateGroup(testData.DEFAULT_GROUP_NAME, testData.DEFAULT_GROUP_UPDATED);
 
-        Mockito.verify(groupRepository).findByName(testData.DEFAULT_GROUP_NAME);
+        Mockito.verify(groupRepository, times(2)).findByName(any());
         Mockito.verify(groupRepository).save(testData.DEFAULT_GROUP_UPDATED);
         Mockito.verifyNoMoreInteractions(groupRepository);
         assertEquals(testData.DEFAULT_GROUP_UPDATED, returnedValue);
